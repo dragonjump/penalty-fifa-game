@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0b3d1a" />
+  <title>PenaltyKick — AR Webcam Shootout</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-shell">
+    <canvas id="game" width="480" height="720" aria-label="Penalty kick game"></canvas>
+    <div id="loading">Loading…</div>
+    <div id="ar-toast"></div>
+    <button id="ar-btn" style="position:absolute;top:10px;left:10px;z-index:10;padding:8px 14px;border:none;border-radius:6px;background:rgba(0,0,0,0.6);color:#fff;font-size:13px;cursor:pointer;">AR Mode</button>
+    <button id="ar-debug-btn" style="position:absolute;top:10px;left:100px;z-index:10;padding:6px 10px;border:none;border-radius:6px;background:rgba(0,0,0,0.4);color:#aaa;font-size:11px;cursor:pointer;display:none;">Debug</button>
+  </div>
+
+  <!-- Classic script tags in order — no ES modules so file:// works -->
+  <script src="src/constants.js"></script>
+  <script src="src/state.js"></script>
+  <script src="src/audio.js"></script>
+  <script src="src/keeper.js"></script>
+  <script src="src/physics.js"></script>
+  <script src="src/render.js"></script>
+  <script src="src/input.js"></script>
+  <script src="src/ar-mapping.js"></script>
+  <script src="src/ar-input.js"></script>
+  <script src="src/ar-pose.js"></script>
+  <script src="src/main.js"></script>
+  <script>
+    // Hide loading once main.js has booted a frame.
+    window.addEventListener('load', function () {
+      var l = document.getElementById('loading');
+      if (l) l.style.display = 'none';
+    });
+  </script>
+
+  <!-- MediaPipe Tasks Vision (loaded via dynamic import, exposes window.vision) -->
+  <script>
+    (function loadMediaPipe() {
+      import('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/vision_bundle.mjs')
+        .then(function (vision) {
+          window.vision = vision;
+          console.log('MediaPipe Tasks Vision loaded');
+        })
+        .catch(function (e) {
+          console.warn('MediaPipe Tasks Vision failed to load:', e.message);
+        });
+    })();
+  </script>
+
+  <script>
+    // Wire AR buttons once page has loaded.
+    (function wireArButtons() {
+      var btn = document.getElementById('ar-btn');
+      var dbgBtn = document.getElementById('ar-debug-btn');
+
+      // Poll for vision to load (dynamic import is async)
+      function checkVisionAndShow() {
+        if (typeof vision !== 'undefined' && vision.FilesetResolver) {
+          if (btn) btn.style.display = 'block';
+        } else {
+          // Retry in 200ms — module may still be loading
+          setTimeout(checkVisionAndShow, 200);
+        }
+      }
+      checkVisionAndShow();
+
+      // AR Mode button — toggles AR on/off
+      if (btn) {
+        btn.addEventListener('click', function () {
+          if (window.toggleArMode) {
+            window.toggleArMode();
+            // Show debug button after toggling AR on
+            if (dbgBtn) dbgBtn.style.display = 'inline-block';
+          } else {
+            showToast('Game not ready yet');
+          }
+        });
+      }
+
+      // Debug toggle button — default hidden
+      if (dbgBtn) {
+        dbgBtn.addEventListener('click', function () {
+          if (window.toggleArDebug) window.toggleArDebug();
+          // Toggle visual state
+          if (dbgBtn.dataset.on === '1') {
+            dbgBtn.dataset.on = '0';
+            dbgBtn.style.color = '#aaa';
+            dbgBtn.style.background = 'rgba(0,0,0,0.4)';
+          } else {
+            dbgBtn.dataset.on = '1';
+            dbgBtn.style.color = '#66ff88';
+            dbgBtn.style.background = 'rgba(0,40,0,0.6)';
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

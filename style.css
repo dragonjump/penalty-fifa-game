@@ -1,0 +1,101 @@
+/* Penalty Kick — minimal mobile-first layout */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  background: #0b3d1a;
+  color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#game-shell {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(ellipse at center, #14542b 0%, #072613 100%);
+}
+
+/* Landscape: center the canvas */
+@media (orientation: landscape) {
+  #game-shell {
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Portrait: game at top, camera at bottom */
+@media (orientation: portrait) {
+  #game-shell {
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 8px;
+  }
+}
+
+#game {
+  display: block;
+  background: #1e7a3a;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  touch-action: none;
+  max-width: 100%;
+}
+
+/* Portrait: canvas takes top ~65% of screen */
+@media (orientation: portrait) {
+  #game {
+    max-height:92vh;
+    height: auto;
+  }
+}
+
+/* Landscape: canvas fills more space */
+@media (orientation: landscape) {
+  #game {
+    max-height: 100vh;
+  }
+}
+
+#loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+}
+
+/* AR toast notification */
+#ar-toast {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  max-width: 80%;
+  text-align: center;
+}
+
+#ar-btn {
+  font-family: inherit;
+  transition: background 0.2s;
+}
+#ar-btn:hover {
+  background: rgba(0, 200, 100, 0.7) !important;
+}
