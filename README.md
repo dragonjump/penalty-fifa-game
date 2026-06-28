@@ -2,6 +2,10 @@
 
 A mobile-first, browser-based penalty shootout game with programmatic stickman art, an AI keeper, and synthesized sound. No build step, no dependencies — just open `index.html`.
 
+## Article
+`https://www.linkedin.com/pulse/loop-engineering-claude-code-build-ar-motion-penalty-sean-lon-xjrpc/`
+
+
 ## Run
 
 ```
